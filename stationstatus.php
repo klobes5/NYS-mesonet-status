@@ -27,6 +27,7 @@
 	catch (PDOException $e){
 		echo $e->getMessage();
 	}
+    $sql = 
     //fetch table rows from mysql db
     $sql = "select distinct stid from metadb_prod.site order by stid";
     $stmt = $dbh->query($sql);
@@ -36,18 +37,17 @@
     {
         $sarray[] = $row['stid'];
     }
-	$q='call getData()';
-	$dbh->query($q);
-	$sql = "select stationId,reportTime,flagdivya from filedata order by stationId";
+    
+	 $sql = "select stationid, lastReportTime,ingestid from SiteStatusHistory_dev.StationReport_tbl WHERE lastReportTime BETWEEN '2016-09-01 00:00:00' and '2016-09-07 00:00:00' ORDER BY stationid, lastReportTime DESC";
     $stmt = $dbh->query($sql);
 	$stmt->setFetchMode(PDO::FETCH_ASSOC);
     $data = [];    
     while($row =$stmt->fetch())
     {
-         $time = strtotime($row['reportTime']) * 1000;
+         $time = strtotime($row['lastReportTime']) * 1000;
       	  $siteid = array_search($row['stationId'], $sarray);
-         $value = $row['flagdivya'];
-         array_push($data, [$time, $siteid, $value]);
+         echo "$time $siteid<br>";
+        // array_push($data, [$time, $siteid]);
     }
 
 
