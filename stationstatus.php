@@ -1,13 +1,4 @@
 <html>
-<head>
-<title>Site Status Report History</title>
-   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-   <script src="http://code.highcharts.com/highcharts.js"></script>    
-   <script src="http://code.highcharts.com/highcharts-more.js"></script>    
-   <script src="http://code.highcharts.com/modules/heatmap.js"></script>  
-</head>
-<body>
-<div id="container"></div>
 <?php
   require("/mnt/remote/www/test/common/config/db/constants.php"); 
   $host=DB_WEB_HOSTNAME;
@@ -21,7 +12,7 @@
     $dbh= new PDO($dsn, $user, $password);
     if($dbh)
     {
-      echo "Connected to the <strong>$dbname</strong> database successfully!";
+     // echo "Connected to the <strong>$dbname</strong> database successfully!";
         }
   }
   catch (PDOException $e){
@@ -42,7 +33,7 @@
    //$sql = "select stationid, lastReportTime from SiteStatusHistory_dev.StationReport_tbl WHERE lastReportTime BETWEEN '2016-09-01 00:00:00' and '2016-09-07 00:00:00' ORDER BY stationid, lastReportTime ASC";
     $sql = "select stationId, lastReportTime, count(*) as count
 from SiteStatusHistory_dev.StationReport_tbl 
-WHERE lastReportTime BETWEEN '2016-09-13 00:00:00' and '2016-09-13 23:00:00'
+WHERE lastReportTime BETWEEN '2016-09-14 00:00:00' and '2016-09-14 23:59:00'
 Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId ASC";
 
     $stmt = $dbh->query($sql);
@@ -96,7 +87,20 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
     
 
  ?>
-<script language="JavaScript">
+<head>
+<title>Heatmap</title>
+<style>
+#container {
+  width: 100%;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/heatmap.js"></script>
+<script src="http://momentjs.com/downloads/moment.min.js"></script>
+<script>
 var sites = <?php echo json_encode($sites); ?>;
 var data = <?php echo json_encode($data); ?>;
 
@@ -105,15 +109,15 @@ $(document).ready(function () {
    var pixels_per_site = 15;
    var margins = 35;
    var height = pixels_per_site * sites.length + margins;
+
     $('#container').height(height);
     console.log(sites.length);
     $('#container').highcharts({
         chart: {
             type: 'heatmap',
-            marginTop: 40,
-            marginBottom: 80,
+            marginTop: 30,
+            marginBottom: 35,
             plotBorderWidth: 1,
-      height: 1000
         },
 
 
@@ -122,8 +126,8 @@ $(document).ready(function () {
         },
 
         xAxis: {
-            gridLineWidth:1,
-      type:'datetime'
+            gridLineWidth:0,
+            type:'datetime'
         },
 
         yAxis: {
@@ -133,15 +137,33 @@ $(document).ready(function () {
 
     colorAxis: {
       min: 0,
-      max: 10,
+      max: 24,
+      /*
       stops: [
-        [0, '#00AA00'],
-        [6, '#00FF00'],
-        [12, '#FFFF00'],
-        [24, '#FF0000'],
+      
+        [22, '#ffff00'],
+        [23, '#adff2f'],
+        [24, '#009900']
+        
+        [3, '#009900'],
+        [22, '#ffff00'],
+        [23, '#adff2f'],
+        [24, '#009900']
       ],
-      minColor: '#00FF00',
-      maxColor: '#FF0000'
+      */
+      stops: [
+        [0, '#8b0000'],
+        [.7, '#ff0000'],
+        [.8, '#ffff00'],
+        [.9, '#adff2f'],
+        [1, '#009900']
+      ],
+
+
+
+      min: 0,
+      maxColor: '#009900',
+      minColor: '#ff0000'
     },
 
         legend: {
@@ -154,29 +176,29 @@ $(document).ready(function () {
         },
     plotOptions: {
       heatmap: {
-        colsize: 86400000,
+        colsize: 30000000,
         turboThreshold: 0
       }
     },
     tooltip: {
       formatter: function () {
-        return '<b>' + this.series.yAxis.categories[this.point.y] + ' ' + Highcharts.dateFormat('%Y-%m-%d', this.point.x) + '</b>: ' + this.point.value;
+        return '<b>' + this.series.yAxis.categories[this.point.y] + ' ' + Highcharts.dateFormat('%Y-%m-%d %H:%M', this.point.x) + ' </b> ' + this.point.value;
       }
     },
 
         series: [{
             name: 'Site Status',
-            borderWidth: 1,
+            borderWidth: 0,
             data: data,
             dataLabels: {
-                enabled: true,
-                color: '#000000'
+                enabled: false,
+                //color: '#000000'
             }
         }]
 
     });
 });
 </script>
-
+<div id="container"></div>
 </body>
 </html>
