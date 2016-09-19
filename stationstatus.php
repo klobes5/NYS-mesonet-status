@@ -112,6 +112,11 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
     $( "#enddatepicker" ).datepicker();
   } );
 </script>
+  <script>
+  $( function() {
+    $( "#input" ).checkboxradio();
+  } );
+  </script>
 <script>
 var sites = <?php echo json_encode($sites); ?>;
 var data = <?php echo json_encode($data); ?>;
@@ -212,6 +217,21 @@ $(document).ready(function () {
 });
 </script>
 <p>Start Date: <input type="text" id="startdatepicker">  End Date: <input type="text" id="enddatepicker"></p>
+<div class="widget">
+  <fieldset>
+    <legend>Select time interval to display: </legend>
+    <label for="radio-1">5 minutes</label>
+    <input type="radio" name="radio-1" id="radio-1">
+    <label for="radio-2">30 minutes</label>
+    <input type="radio" name="radio-1" id="radio-2">
+    <label for="radio-3">Hour</label>
+    <input type="radio" name="radio-1" id="radio-3">
+    <label for="radio-4">Day</label>
+    <input type="radio" name="radio-1" id="radio-4">
+    <label for="radio-5">Month</label>
+    <input type="radio" name="radio-1" id="radio-5">
+  </fieldset>
+  </div>
 <div id="container"></div>
 </body>
 </html>
