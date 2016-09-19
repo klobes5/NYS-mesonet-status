@@ -100,6 +100,18 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
 <script src="http://code.highcharts.com/highcharts-more.js"></script>
 <script src="http://code.highcharts.com/modules/heatmap.js"></script>
 <script src="http://momentjs.com/downloads/moment.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/~klobiondo/jquery-ui-1.12.1.custom/external/jquery/jquery.js">
+<script>
+  $( function() {
+    $( "#startdatepicker" ).datepicker();
+  } );
+</script>
+<script>
+  $( function() {
+    $( "#enddatepicker" ).datepicker();
+  } );
+</script>
 <script>
 var sites = <?php echo json_encode($sites); ?>;
 var data = <?php echo json_encode($data); ?>;
@@ -199,6 +211,7 @@ $(document).ready(function () {
     });
 });
 </script>
+<p>Start Date: <input type="text" id="startdatepicker">  End Date: <input type="text" id="enddatepicker"></p>
 <div id="container"></div>
 </body>
 </html>
