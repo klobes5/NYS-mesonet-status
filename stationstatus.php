@@ -8,6 +8,24 @@
   $dsn = "mysql:host=$host;dbname=$dbname"; 
   $station_table_stack=array();
   $dbh=null;
+
+  //below is temporary for testing
+  $startDate = strtotime('2016-09-01 00:00:00');
+  //--------------
+
+  //holds data to be passed into php for resubmit
+  $data = array();
+
+  //start and end dates from form
+  if (isset($_GET['startdatepicker'])){
+    $startdate = urldecode ($_GET['startdatepicker']);
+    echo "chosen startdate is: ".$startdate;
+  }
+  if (isset($_GET['startdatepicker'])){
+    $enddate = urldecode ($_GET['enddatepicker']);
+    echo "\nchosen enddate is: ".$enddate;
+  }
+
   try{
     $dbh= new PDO($dsn, $user, $password);
     if($dbh)
@@ -40,12 +58,6 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
   $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $data = [];    
 
-/*******initialize values for manipulation in loop that follows *******/ 
-  //Start time is input from webform
-  //below is temporary for testing
-   $startDate = strtotime('2016-09-01 00:00:00');
-   //prevDate is for comparisons
- 
     while($row =$stmt->fetch())
     {    
          $time = strtotime($row['lastReportTime']) * 1000;
@@ -57,34 +69,6 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
          array_push($data, [$time, $index, $frequency]);
          
     }
-
-
-    /* $dbdata = [
-      ['stationId' => 'BATA', 'time' => '2016-05-09 13:50:00', 'flag' => 1],
-      ['stationId' => 'BELD', 'time' => '2016-05-09 13:50:00', 'flag' => 1],
-      ['stationId' => 'BELL', 'time' => '2016-05-09 13:50:00', 'flag' => 0],
-      ['stationId' => 'BERK', 'time' => '2016-05-09 13:50:00', 'flag' => 1],
-      ['stationId' => 'BRAN', 'time' => '2016-05-09 13:50:00', 'flag' => 1],
-      ['stationId' => 'BATA', 'time' => '2016-05-09 13:55:00', 'flag' => 1],
-      ['stationId' => 'BELD', 'time' => '2016-05-09 13:55:00', 'flag' => 1],
-      ['stationId' => 'BELL', 'time' => '2016-05-09 13:55:00', 'flag' => 0],
-      ['stationId' => 'BERK', 'time' => '2016-05-09 13:55:00', 'flag' => 1],
-      ['stationId' => 'BRAN', 'time' => '2016-05-09 13:55:00', 'flag' => 1],
-      ['stationId' => 'BATA', 'time' => '2016-05-09 14:00:00', 'flag' => 0],
-      ['stationId' => 'BELD', 'time' => '2016-05-09 14:00:00', 'flag' => 1],
-      ['stationId' => 'BELL', 'time' => '2016-05-09 14:00:00', 'flag' => 1],
-      ['stationId' => 'BERK', 'time' => '2016-05-09 14:00:00', 'flag' => 1],
-      ['stationId' => 'BRAN', 'time' => '2016-05-09 14:00:00', 'flag' => 1]
-    ];
-
-    $data = [];
-    foreach ($dbdata as $row) {
-      $time = strtotime($row['time']) * 1000;
-      $siteid = array_search($row['stationId'], $sarray);
-      $value = $row['flag'];
-      array_push($data, [$time, $siteid, $value]);
-    } */
-    
 
  ?>
 <head>
@@ -121,30 +105,27 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
     $( "#input" ).checkboxradio();
   } );
   </script>
-  <!-- <script>
-    $( "form" ).submit(function( event ) {
-      if ( $( "input:first" ).val() === "correct" ) {
-        $( "span" ).text( "Validated..." ).show();
-        return;
-      }
-    $( "span" ).text( "Not valid!" ).show().fadeOut( 1000 );
-    event.preventDefault();
-    });
-</script> -->
 <script>
-  $("#reload").click(function() {
+$(document).ready(function(){
+  $('form').submit(function(event) {
+    var formData ={
+      'sdate' : $('input[name=startdatepicker]').val(),
+      'edate' : $('input[name=enddatepicker]').val(),
+      'interval' : $('input[name=radio-1').val() 
+    };
     $.ajax({
         type: 'POST',
         url: "stationstatus.php",
+        data: formData,
         dataType: "json",
-        data: $('#myform').serialize(),
-        success: function(data) {
-            console.log("Done");
-
-        }
+        encode :true
+        })
+    .done(function(data){
+      console.log(data);
     });
- return false;
-});​
+ event.preventDefault();
+});
+});
 </script>
 <script>
 var sites = <?php echo json_encode($sites); ?>;
@@ -245,9 +226,9 @@ $(document).ready(function () {
     });
 });
 </script>
-<form id="reload" name="myform">
-  <p>Start Date: <input type="text" id="startdatepicker" value="sdate">  End Date: 
-  <input type="text" id="enddatepicker" value="edate"></p>
+<form action="stationstatus.php" method="POST">
+  <p>Start Date: <input type="text" id="startdatepicker" name="startdatepicker" value="startdate">  End Date: 
+  <input type="text" id="enddatepicker" name="enddatepicker" value="enddate"></p>
   <div class="widget">
     <fieldset>
       <legend>Select time interval to display: </legend>
@@ -263,7 +244,7 @@ $(document).ready(function () {
       <input type="radio" name="radio-1" id="radio-5">
     </fieldset>
   </div>
-  <input type="submit" value="Reload">
+  <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button>
 </form>
 <span></span>
 <div id="container"></div>
