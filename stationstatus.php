@@ -77,6 +77,7 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
 #container {
   width: 100%;
 }
+<style is="custom-style" include="iron-flex iron-flex-alignment">
 </style>
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -208,13 +209,20 @@ $(document).ready(function () {
     });
 });
 </script>
+<div class="col-sm-6 col-sm-offset-3">
 <form action="reload.php" method="POST">
-  
-  <p>Start Date: <input type="text" id="startdatepicker" name="startdatepicker" value="startdate">  End Date: 
-  <input type="text" id="enddatepicker" name="enddatepicker" value="enddate"></p>
-  <div class="widget">
+<div id="sdate-group" class="form-group">
+<label for="sdate">Start Date:</label>
+<input type="text" id="startdatepicker" name="startdatepicker" value="startdate">  
+</div>
+<div id="edate-group" class="form-group">
+<label for="edate">End Date:</label>
+<input type="text" id="enddatepicker" name="enddatepicker" value="enddate"></p>
+</div>
+
+  <div id="interval class="form-group">
+  <label for="interval">Time Interval</label>
     <fieldset>
-      <legend>Select time interval to display: </legend>
       <label for="radio-1"> 5 minutes: </label>
       <input type="radio" name="radio-1" id="radio-1">
       <label for="radio-2"> 30 minutes: </label>
@@ -227,8 +235,10 @@ $(document).ready(function () {
       <input type="radio" name="radio-1" id="radio-5">
     </fieldset>
   </div>
-  <input type="submit" id="submit" value="Submit" />
+  <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button>
+
 </form>
+</div>
 <span></span>
 <div id="container"></div>
 </body>

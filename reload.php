@@ -13,9 +13,7 @@ $data = array();
     if (empty($_POST['interval']))
         $errors['interval'] = 'Please select an interval.';
 
-
     if ( ! empty($errors)) {
-
         // if there are items in our errors array, return those errors
         $data['success'] = false;
         $data['errors']  = $errors;
@@ -27,4 +25,4 @@ $data = array();
 
     // return all our data to an AJAX call
     echo json_encode($data);
-    ?>
+?>
