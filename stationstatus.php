@@ -78,12 +78,14 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
   width: 100%;
 }
 </style>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/highcharts-more.js"></script>
 <script src="http://code.highcharts.com/modules/heatmap.js"></script>
 <script src="http://momentjs.com/downloads/moment.min.js"></script>
+<script src="./process.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/~klobiondo/jquery-ui-1.12.1.custom/external/jquery/jquery.js">
 <script>
@@ -106,31 +108,11 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
   } );
   </script>
 <script>
-$(document).ready(function(){
-  $('form').submit(function(event) {
-    var formData ={
-      'sdate' : $('input[name=startdatepicker]').val(),
-      'edate' : $('input[name=enddatepicker]').val(),
-      'interval' : $('input[name=radio-1').val() 
-    };
-    $.ajax({
-        type: 'POST',
-        url: "stationstatus.php",
-        data: formData,
-        dataType: "json",
-        encode :true
-        })
-    .done(function(data){
-      console.log(data);
-    });
- event.preventDefault();
-});
-});
+
 </script>
 <script>
 var sites = <?php echo json_encode($sites); ?>;
 var data = <?php echo json_encode($data); ?>;
-
 $(document).ready(function () {
 
    var pixels_per_site = 15;
@@ -226,7 +208,8 @@ $(document).ready(function () {
     });
 });
 </script>
-<form action="stationstatus.php" method="POST">
+<form action="reload.php" method="POST">
+  
   <p>Start Date: <input type="text" id="startdatepicker" name="startdatepicker" value="startdate">  End Date: 
   <input type="text" id="enddatepicker" name="enddatepicker" value="enddate"></p>
   <div class="widget">
@@ -244,7 +227,7 @@ $(document).ready(function () {
       <input type="radio" name="radio-1" id="radio-5">
     </fieldset>
   </div>
-  <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button>
+  <input type="submit" id="submit" value="Submit" />
 </form>
 <span></span>
 <div id="container"></div>
