@@ -104,12 +104,16 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
 <link rel="stylesheet" href="/~klobiondo/jquery-ui-1.12.1.custom/external/jquery/jquery.js">
 <script>
   $( function() {
-    $( "#startdatepicker" ).datepicker();
+    $( "#startdatepicker" ).datepicker({
+      showButtonPanel: true
+    });
   } );
 </script>
 <script>
   $( function() {
-    $( "#enddatepicker" ).datepicker();
+    $( "#enddatepicker" ).datepicker({
+      showButtonPanel:true
+    });
   } );
 </script>
   <script>
@@ -117,6 +121,31 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
     $( "#input" ).checkboxradio();
   } );
   </script>
+  <!-- <script>
+    $( "form" ).submit(function( event ) {
+      if ( $( "input:first" ).val() === "correct" ) {
+        $( "span" ).text( "Validated..." ).show();
+        return;
+      }
+    $( "span" ).text( "Not valid!" ).show().fadeOut( 1000 );
+    event.preventDefault();
+    });
+</script> -->
+<script>
+  $("#reload").click(function() {
+    $.ajax({
+        type: 'POST',
+        url: "stationstatus.php",
+        dataType: "json",
+        data: $('#myform').serialize(),
+        success: function(data) {
+            console.log("Done");
+
+        }
+    });
+ return false;
+});​
+</script>
 <script>
 var sites = <?php echo json_encode($sites); ?>;
 var data = <?php echo json_encode($data); ?>;
@@ -216,22 +245,27 @@ $(document).ready(function () {
     });
 });
 </script>
-<p>Start Date: <input type="text" id="startdatepicker">  End Date: <input type="text" id="enddatepicker"></p>
-<div class="widget">
-  <fieldset>
-    <legend>Select time interval to display: </legend>
-    <label for="radio-1">5 minutes</label>
-    <input type="radio" name="radio-1" id="radio-1">
-    <label for="radio-2">30 minutes</label>
-    <input type="radio" name="radio-1" id="radio-2">
-    <label for="radio-3">Hour</label>
-    <input type="radio" name="radio-1" id="radio-3">
-    <label for="radio-4">Day</label>
-    <input type="radio" name="radio-1" id="radio-4">
-    <label for="radio-5">Month</label>
-    <input type="radio" name="radio-1" id="radio-5">
-  </fieldset>
+<form id="reload" name="myform">
+  <p>Start Date: <input type="text" id="startdatepicker" value="sdate">  End Date: 
+  <input type="text" id="enddatepicker" value="edate"></p>
+  <div class="widget">
+    <fieldset>
+      <legend>Select time interval to display: </legend>
+      <label for="radio-1"> 5 minutes: </label>
+      <input type="radio" name="radio-1" id="radio-1">
+      <label for="radio-2"> 30 minutes: </label>
+      <input type="radio" name="radio-1" id="radio-2">
+      <label for="radio-3"> Hour: </label>
+      <input type="radio" name="radio-1" id="radio-3">
+      <label for="radio-4"> Day: </label>
+      <input type="radio" name="radio-1" id="radio-4">
+      <label for="radio-5"> 30 days: </label>
+      <input type="radio" name="radio-1" id="radio-5">
+    </fieldset>
   </div>
+  <input type="submit" value="Reload">
+</form>
+<span></span>
 <div id="container"></div>
 </body>
 </html>
