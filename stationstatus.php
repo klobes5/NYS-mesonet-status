@@ -8,11 +8,10 @@
   $dsn = "mysql:host=$host;dbname=$dbname"; 
   $station_table_stack=array();
   $dbh=null;
-
+  //Below are intervals in UNIX Time for SQL query
   //below is temporary for testing
   $startDate = strtotime('2016-09-01 00:00:00');
   //--------------
-
   //holds data to be passed into php for resubmit
   $data = array();
 
@@ -21,13 +20,32 @@
     $startdate = urldecode ($_GET['startdatepicker']);
     echo "chosen startdate is: ".$startdate;
   }
-  if (isset($_GET['startdatepicker'])){
+  if (isset($_GET['enddatepicker'])){
     $enddate = urldecode ($_GET['enddatepicker']);
     echo "\nchosen enddate is: ".$enddate;
   }
+  //Sets the time interval based on radio box 
   if (isset($_GET['radio-1'])){
     $interval = urldecode ($_GET['radio-1']);
     echo "\nInterval is: ".$interval;
+    switch ($interval){
+      case "interval5":
+        $myInterval = 300; //seconds in five minutes
+        break;
+      case "interval30":
+        $myInterval = 1800; //seconds in 30 minutes
+        break;
+      case "intervalhour":
+        $myInterval = 3600; //seconds in an hour
+        break;
+      case "intervalday":
+        $myInterval = 86400; //seconds in a day
+        break;
+      case "intervalmonth":
+        $myInterval = 2592000; //seconds in 30 days
+        break;
+    }
+    echo "\nValue of myInterval is: ".$myInterval;
   }
   try{
     $dbh= new PDO($dsn, $user, $password);
@@ -41,7 +59,7 @@
   }
 
     //fetch table rows from mysql db
-    $sql = "select distinct stationId from SiteStatusHistory_dev.StationReport_tbl order by stationId DESC";
+    $sql = "select distinct stationId from SiteStatusHistory_dev.StationReport_tbl order by stationId ASC";
     $stmt = $dbh->query($sql);
   $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $sarray = [];
@@ -50,23 +68,28 @@
         $sites[] = $row['stationId'];
         //echo $row['stid'];
     }
-
-   //$sql = "select stationid, lastReportTime from SiteStatusHistory_dev.StationReport_tbl WHERE lastReportTime BETWEEN '2016-09-01 00:00:00' and '2016-09-07 00:00:00' ORDER BY stationid, lastReportTime ASC";
-    $sql = "select stationId, lastReportTime, count(*) as count
-from SiteStatusHistory_dev.StationReport_tbl 
-WHERE lastReportTime BETWEEN '2016-09-14 00:00:00' and '2016-09-14 23:59:00'
-Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId ASC";
+   // $start = date("Y-m-d",str_replace('/','-', $startdate));
+    //$end = date("Y-m-d",str_replace('/','-', $enddate));
+    $start = date("Y-m-d H:i:s", strtotime($startdate));
+    $end = date("Y-m-d H:i:s", strtotime($enddate));
+    if(isset($_GET['startdatepicker']) AND isset($_GET['enddatepicker']) AND isset($_GET['radio-1'])){
+        $sql = "select stationId, reportTime, SUM(missed) as sum from SiteStatusHistory_dev.siteMisses WHERE reportTime BETWEEN '$start 00:00:00' and '$end 23:59:59' Group BY stationId, UNIX_TIMESTAMP(reportTime) DIV $myInterval ORDER BY stationId ASC";
+        echo $sql;
+    } else{
+      $sql = "select stationId, reportTime, SUM(missed) as sum from SiteStatusHistory_dev.siteMisses WHERE reportTime BETWEEN '2016-05-02 00:00:00' and '2016-06-10 23:59:00' Group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 3600 ORDER BY stationId ASC";
+      echo $sql;
+    }
 
     $stmt = $dbh->query($sql);
-  $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $data = [];    
 
     while($row =$stmt->fetch())
     {    
-         $time = strtotime($row['lastReportTime']) * 1000;
+         $time = strtotime($row['reportTime']) * 1000;
         //$time = strtotime($row['lastReportTime']);
          $index = array_search($row['stationId'], $sites);
-         $frequency = $row['count'];
+         $frequency = $row['sum'];
          
          //push the information to data fit for HighCharts
          array_push($data, [$time, $index, $frequency]);
