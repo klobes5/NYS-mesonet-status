@@ -25,7 +25,10 @@
     $enddate = urldecode ($_GET['enddatepicker']);
     echo "\nchosen enddate is: ".$enddate;
   }
-
+  if (isset($_GET['radio-1'])){
+    $interval = urldecode ($_GET['radio-1']);
+    echo "\nInterval is: ".$interval;
+  }
   try{
     $dbh= new PDO($dsn, $user, $password);
     if($dbh)
@@ -105,7 +108,7 @@ Group BY stationId, UNIX_TIMESTAMP(lastReportTime) DIV 3600 ORDER BY stationId A
 </script>
   <script>
   $( function() {
-    $( "#input" ).checkboxradio();
+    $( "#radio-1" ).checkboxradio();
   } );
   </script>
 <script>
@@ -210,29 +213,27 @@ $(document).ready(function () {
 });
 </script>
 <div class="col-sm-6 col-sm-offset-3">
-<form action="reload.php" method="POST">
-<div id="sdate-group" class="form-group">
+<form action="stationstatus.php" method="GET">
+<div id="date-group" class="form-group">
 <label for="sdate">Start Date:</label>
-<input type="text" id="startdatepicker" name="startdatepicker" value="startdate">  
-</div>
-<div id="edate-group" class="form-group">
+<input type="text" id="startdatepicker" name="startdatepicker"> 
 <label for="edate">End Date:</label>
-<input type="text" id="enddatepicker" name="enddatepicker" value="enddate"></p>
+<input type="text" id="enddatepicker" name="enddatepicker"></p>
 </div>
 
   <div id="interval class="form-group">
   <label for="interval">Time Interval</label>
     <fieldset>
-      <label for="radio-1"> 5 minutes: </label>
-      <input type="radio" name="radio-1" id="radio-1">
-      <label for="radio-2"> 30 minutes: </label>
-      <input type="radio" name="radio-1" id="radio-2">
-      <label for="radio-3"> Hour: </label>
-      <input type="radio" name="radio-1" id="radio-3">
-      <label for="radio-4"> Day: </label>
-      <input type="radio" name="radio-1" id="radio-4">
-      <label for="radio-5"> 30 days: </label>
-      <input type="radio" name="radio-1" id="radio-5">
+      <label for="interval"> 5 minutes: </label>
+      <input type="radio" name="radio-1" value="interval5">
+      <label for="interval"> 30 minutes: </label>
+      <input type="radio" name="radio-1" value="interval30">
+      <label for="interval"> Hour: </label>
+      <input type="radio" name="radio-1" value="intervalhour">
+      <label for="interval"> Day: </label>
+      <input type="radio" name="radio-1" value="intervalday">
+      <label for="interval"> 30 days: </label>
+      <input type="radio" name="radio-1" value="intervalmonth">
     </fieldset>
   </div>
   <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button>
