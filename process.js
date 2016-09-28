@@ -1,3 +1,113 @@
+
+  $( function() {
+    $( "#startdatepicker" ).datepicker({
+      showButtonPanel: true
+    });
+  } );
+
+  $( function() {
+    $( "#enddatepicker" ).datepicker({
+      showButtonPanel:true
+    });
+  } );
+
+  $( function() {
+    $( "#radio-1" ).checkboxradio();
+  } );
+$(document).ready(function () {
+
+   var pixels_per_site = 15;
+   var margins = 35;
+   var height = pixels_per_site * sites.length + margins;
+
+    $('#container').height(height);
+    console.log(sites.length);
+    $('#container').highcharts({
+        chart: {
+            type: 'heatmap',
+            marginTop: 30,
+            marginBottom: 35,
+            plotBorderWidth: 1,
+        },
+
+
+        title: {
+            text: 'Station Report'
+        },
+
+        xAxis: {
+            gridLineWidth:0,
+            type:'datetime'
+        },
+
+        yAxis: {
+            categories: sites,
+            title: null
+        },
+
+    colorAxis: {
+      min: 0,
+      max: 24,
+      /*
+      stops: [
+      
+        [22, '#ffff00'],
+        [23, '#adff2f'],
+        [24, '#009900']
+        
+        [3, '#009900'],
+        [22, '#ffff00'],
+        [23, '#adff2f'],
+        [24, '#009900']
+      ],
+      */
+      stops: [
+        [0, '#8b0000'],
+        [.7, '#ff0000'],
+        [.8, '#ffff00'],
+        [.9, '#adff2f'],
+        [1, '#009900']
+      ],
+
+
+
+      min: 0,
+      maxColor: '#009900',
+      minColor: '#ff0000'
+    },
+
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            margin: 0,
+            verticalAlign: 'top',
+            y: 25,
+            symbolHeight: 280
+        },
+    plotOptions: {
+      heatmap: {
+        colsize: 30000000,
+        turboThreshold: 0
+      }
+    },
+    tooltip: {
+      formatter: function () {
+        return '<b>' + this.series.yAxis.categories[this.point.y] + ' ' + Highcharts.dateFormat('%Y-%m-%d %H:%M', this.point.x) + ' </b> ' + this.point.value;
+      }
+    },
+
+        series: [{
+            name: 'Site Status',
+            borderWidth: 0,
+            data: data,
+            dataLabels: {
+                enabled: false,
+                //color: '#000000'
+            }
+        }]
+
+    });
+});
 $(document).ready(function() {
     // process the form
     $('form').submit(function(event) {
