@@ -14,12 +14,38 @@
   $( function() {
     $( "#radio-1" ).checkboxradio();
   } );
+function getUrlVars() {
+var vars = {};
+var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+vars[key] = value;
+});
+return vars;
+}
 $(document).ready(function () {
 
    var pixels_per_site = 15;
    var margins = 35;
    var height = pixels_per_site * sites.length + margins;
-
+   var phpMax = getUrlVars()["radio-1"]
+   console.log(phpMax);
+   switch (phpMax){
+      case "interval5":
+        myMax = 1; //Max possible reports
+        break;
+      case "interval30":
+        myMax = 6; 
+        break;
+      case "intervalhour":
+        myMax = 12; 
+        break;
+      case "intervalday":
+        myMax = 288; 
+        break;
+      case "intervalmonth":
+        myMax = 8640;
+        break;
+    }
+    console.log(myMax);
     $('#container').height(height);
     console.log(sites.length);
     $('#container').highcharts({
@@ -47,29 +73,25 @@ $(document).ready(function () {
 
     colorAxis: {
       min: 0,
-      max: 24,
-      /*
-      stops: [
+      //max: 24,
+      max : myMax,
       
-        [22, '#ffff00'],
-        [23, '#adff2f'],
-        [24, '#009900']
-        
-        [3, '#009900'],
-        [22, '#ffff00'],
-        [23, '#adff2f'],
-        [24, '#009900']
-      ],
-      */
+      //GET INTERVAL FROM php page and redraw with proper scale
+      //max = " <?php echo $max ?> "
+     /*
       stops: [
         [0, '#8b0000'],
         [.7, '#ff0000'],
         [.8, '#ffff00'],
         [.9, '#adff2f'],
         [1, '#009900']
+      ],*/
+      stops: [
+      [0, '#78AB46'], // pea green
+      [.001, '#ffff00'], //yellow abrupt change
+      [.1, '#ffa500'], //light orange
+      [1, '#ff4c4c'] //light red
       ],
-
-
 
       min: 0,
       maxColor: '#009900',
