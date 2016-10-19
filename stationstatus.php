@@ -130,11 +130,10 @@ var data = <?php echo json_encode($data); ?>;
 <form action="stationstatus.php" method="GET">
 <div id="date-group" class="form-group">
 <label for="sdate">Start Date:</label>
-<input type="text" id="startdatepicker" name="startdatepicker"> 
+<input type="text" id="startdatepicker" name="startdatepicker" value="<?php echo $startdate?>"> 
 <label for="edate">End Date:</label>
-<input type="text" id="enddatepicker" name="enddatepicker"></p>
+<input type="text" id="enddatepicker" name="enddatepicker"value="<?php echo $enddate?>"></p>
 </div>
-
   <div id="interval class="form-group">
   <label for="interval">Time Interval</label>
     <fieldset>

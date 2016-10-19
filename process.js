@@ -63,12 +63,15 @@ $(document).ready(function () {
 
         xAxis: {
             gridLineWidth:0,
-            type:'datetime'
+            type:'datetime',
+	    allowDecimals: false
+            
         },
 
         yAxis: {
             categories: sites,
-            title: null
+            title: null,
+            
         },
 
     colorAxis: {
@@ -114,7 +117,7 @@ $(document).ready(function () {
     },
     tooltip: {
       formatter: function () {
-        return '<b>' + this.series.yAxis.categories[this.point.y] + ' ' + Highcharts.dateFormat('%Y-%m-%d %H:%M', this.point.x) + ' </b> ' + this.point.value;
+        return '<b>' + this.series.yAxis.categories[this.point.y] + '</b> ' + Highcharts.dateFormat('%Y-%m-%d %H:%M', this.point.x) + ' ' + this.point.value +' misses';
       }
     },
 
