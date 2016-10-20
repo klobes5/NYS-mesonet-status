@@ -1,4 +1,7 @@
-
+/*
+ * plotOptions -> heatmap -> colsize   controls wierd column formatting issue
+ * it will have to be dynamically generated somehow
+ * */
   $( function() {
     $( "#startdatepicker" ).datepicker({
       showButtonPanel: true
@@ -14,6 +17,12 @@
   $( function() {
     $( "#radio-1" ).checkboxradio();
   } );
+jQuery(document).ready(function(){
+          jQuery('.toggle_container').hide();
+       jQuery('p.trigger').click(function(){
+         jQuery(this).toggleClass('active').next().toggle('slow');
+    });
+});       
 function getUrlVars() {
 var vars = {};
 var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -48,6 +57,7 @@ $(document).ready(function () {
     console.log(myMax);
     $('#container').height(height);
     console.log(sites.length);
+
     $('#container').highcharts({
         chart: {
             type: 'heatmap',
@@ -62,9 +72,16 @@ $(document).ready(function () {
         },
 
         xAxis: {
+            //min: 0,
+            //max: 24,
+            //tickWidth: 1,
+            //step: 2,
             gridLineWidth:0,
             type:'datetime',
-	    allowDecimals: false
+	          allowDecimals: false,
+            type: 'datetime'
+       
+     
             
         },
 
@@ -111,13 +128,16 @@ $(document).ready(function () {
         },
     plotOptions: {
       heatmap: {
-        colsize: 30000000,
+        //colsize: 30000000, // colsize will have to be dynamic based on the number of days selected
+	//                   // and the interval selected -- I will do this after realtime display has been
+	//                   // completed.
+        colsize: 500000, //This is for any number of days with 5 minute intervals
         turboThreshold: 0
       }
     },
     tooltip: {
       formatter: function () {
-        return '<b>' + this.series.yAxis.categories[this.point.y] + '</b> ' + Highcharts.dateFormat('%Y-%m-%d %H:%M', this.point.x) + ' ' + this.point.value +' misses';
+        return '<b>' + this.series.yAxis.categories[this.point.y] + '</b>' + '<br>' + Highcharts.dateFormat('Date: %m-%d-%Y <br> Time: %H:%M', this.point.x) + ' ' + '<br>There were: ' + this.point.value +' misses';
       }
     },
 

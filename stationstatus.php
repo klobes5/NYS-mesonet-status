@@ -110,6 +110,9 @@
 #container {
   width: 100%;
 }
+.highcharts-container{
+/** Rules it should follow **/
+}
 <style is="custom-style" include="iron-flex iron-flex-alignment">
 </style>
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
@@ -125,7 +128,9 @@ var sites = <?php echo json_encode($sites); ?>;
 var data = <?php echo json_encode($data); ?>;
 </script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="/~klobiondo/jquery-ui-1.12.1.custom/external/jquery/jquery.js">
+<p class="trigger"><a>Click here For Options</a></p>
+<div class="toggle_container">
+<div class="block">
 <div class="col-sm-6 col-sm-offset-3">
 <form action="stationstatus.php" method="GET">
 <div id="date-group" class="form-group">
@@ -138,20 +143,22 @@ var data = <?php echo json_encode($data); ?>;
   <label for="interval">Time Interval</label>
     <fieldset>
       <label for="interval"> 5 minutes: </label>
-      <input type="radio" name="radio-1" value="interval5">
+      <input type="radio" name="radio-1" value="interval5"><br>
       <label for="interval"> 30 minutes: </label>
-      <input type="radio" name="radio-1" value="interval30">
+      <input type="radio" name="radio-1" value="interval30"><br>
       <label for="interval"> Hour: </label>
-      <input type="radio" name="radio-1" value="intervalhour">
+      <input type="radio" name="radio-1" value="intervalhour"><br>
       <label for="interval"> Day: </label>
-      <input type="radio" name="radio-1" value="intervalday">
+      <input type="radio" name="radio-1" value="intervalday"><br>
       <label for="interval"> 30 days: </label>
-      <input type="radio" name="radio-1" value="intervalmonth">
+      <input type="radio" name="radio-1" value="intervalmonth"><br>
     </fieldset>
   </div>
   <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button>
 
 </form>
+</div>
+</div>
 </div>
 <span></span>
 <div id="container"></div>
