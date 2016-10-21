@@ -128,10 +128,7 @@ $(document).ready(function () {
         },
     plotOptions: {
       heatmap: {
-        //colsize: 30000000, // colsize will have to be dynamic based on the number of days selected
-	//                   // and the interval selected -- I will do this after realtime display has been
-	//                   // completed.
-        colsize: 500000, //This is for any number of days with 5 minute intervals
+        colsize: 500000 * myMax, //dynamically generate square size based on interval selected.
         turboThreshold: 0
       }
     },
@@ -172,6 +169,7 @@ $(document).ready(function() {
         $.ajax({
             type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
             url         : 'stationstatus.php', // the url where we want to POST
+	    async       : true,
             data        : formData, // our data object
             dataType    : 'json', // what type of data do we expect back from the server
             encode          : true
