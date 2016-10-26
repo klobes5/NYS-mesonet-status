@@ -128,6 +128,8 @@ var sites = <?php echo json_encode($sites); ?>;
 var data = <?php echo json_encode($data); ?>;
 </script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+<body>
 <p class="trigger"><a>Click to toggle options</a></p>
 <div class="toggle_container">
 <div class="block">
