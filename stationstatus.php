@@ -64,7 +64,7 @@
   }
 
     //fetch table rows from mysql db
-    $sql = "select distinct stationId from SiteStatusHistory_dev.StationReport_tbl order by stationId DESC";
+    $sql = "select distinct stationId from SiteStatusHistory_dev.StationReport_tbl where stationId not like 'BARN' AND stationId not LIKE 'EXPASRC2' AND stationId not like 'NYSFAIR' and stationId not like 'TEST3000' and stationId not like 'WFMBSNOW' order by stationId DESC";
     $stmt = $dbh->query($sql);
   $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $sarray = [];
