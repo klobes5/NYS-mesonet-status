@@ -134,7 +134,7 @@ var data = <?php echo json_encode($data); ?>;
 <div class="toggle_container">
 <div class="block">
 <div class="col-sm-6 col-sm-offset-3">
-<form action="stationstatus.php" method="GET">
+<form action="" method="GET">
 <div id="date-group" class="form-group">
 <p>
 <label for="sdate">Start Date:</label>
