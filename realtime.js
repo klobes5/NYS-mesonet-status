@@ -1,7 +1,4 @@
-/*
- * plotOptions -> heatmap -> colsize   controls wierd column formatting issue
- * it will have to be dynamically generated somehow
- * */
+
   $( function() {
     $( "#startdatepicker" ).datepicker({
       showButtonPanel: true
@@ -35,14 +32,14 @@ function requestData() {
         url: 'getData.php',
         success: function(point) {
             var series = chart.series[0],
-                shift = series.data.length > 20; // shift if the series is 
-                                                 // longer than 20
+                shift = series.data.length > 100000; // shift if the series is 
+                                                 // longer than 100000
 
             // add the point
             chart.series[0].addPoint(point, true, shift);
             
-            // call it again after one second
-            setTimeout(requestData, 1000);    
+            // call it again after 5 minutes
+            setTimeout(requestData, 300000);    
         },
         cache: false
     });
