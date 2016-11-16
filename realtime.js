@@ -1,38 +1,9 @@
-
-  $( function() {
-    $( "#startdatepicker" ).datepicker({
-      showButtonPanel: true
-    });
-  } );
-
-  $( function() {
-    $( "#enddatepicker" ).datepicker({
-      showButtonPanel:true
-    });
-  } );
-
-  $( function() {
-    $( "#radio-1" ).checkboxradio();
-  } );
-jQuery(document).ready(function(){
-          jQuery('.toggle_container').hide();
-       jQuery('p.trigger').click(function(){
-         jQuery(this).toggleClass('active').next().toggle('slow');
-    });
-});       
-function getUrlVars() {
-var vars = {};
-var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-vars[key] = value;
-});
-return vars;
-}
 function requestData() {
     $.ajax({
-        url: 'getData.php',
+        url: 'operations.nysmesonet.org/~klobiondo/NYS-mesonet-status/getData.php',
         success: function(point) {
             var series = chart.series[0],
-                shift = series.data.length > 100000; // shift if the series is 
+                shift = series.data.length > 10000000; // shift if the series is 
                                                  // longer than 100000
 
             // add the point
@@ -205,7 +176,8 @@ $(document).ready(function () {
         },
     plotOptions: {
       heatmap: {
-        colsize: 500000 * myMax, //dynamically generate square size based on interval selected.
+        //colsize: 500000 * myMax, //dynamically generate square size based on interval selected.
+        colsize: 500000 * 1, //1 for myMax = 1 when 5 minute intervals are chosen
         turboThreshold: 0
       }
     },
@@ -231,17 +203,6 @@ $(document).ready(function() {
     // process the form
     $('execute').submit(function(event) {
 
-        // get the form data
-        // there are many ways to get this data using jQuery (you can use the class or id also)
-        var formData = {
-            'sdate' : $('input[name=startdatepicker]').val(),
-            'edate' : $('input[name=enddatepicker]').val(),
-            'interval' : $('input[name=radio-1').val() 
-        };
-         console.log("check");
-         console.log(sdate);
-         console.log(edate);
-         console.log(interval);
         // process the form
         $.ajax({
             type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)

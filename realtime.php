@@ -23,35 +23,31 @@
     $enddate = urldecode ($_GET['enddatepicker']);
     //echo "\nchosen enddate is: ".$enddate;
   }
-  //Sets the time interval based on radio box 
-  if (isset($_GET['radio-1'])){
-    $interval = urldecode ($_GET['radio-1']);
-    //echo "\nInterval is: ".$interval;
-    switch ($interval){
-      case "interval5":
-        $myInterval = 300; //seconds in five minutes
-        $max = 1; //Max possible reports
-        break;
-      case "interval30":
-        $myInterval = 1800; //seconds in 30 minutes
-        $max = 6; 
-        break;
-      case "intervalhour":
-        $myInterval = 3600; //seconds in an hour
-        $max = 12; 
-        break;
-      case "intervalday":
-        $myInterval = 86400; //seconds in a day
-        $max = 288; 
-        break;
-      case "intervalmonth":
-        $myInterval = 2592000; //seconds in 30 days
-        $max = 8640;
-        break;
-    }
-    //echo "\nValue of myInterval is: ".$myInterval;
-  }
+
+    $myInterval = 300; //seconds in five minutes
+    $max = 1; //Max possible reports
   
+  try{
+    $dbh= new PDO($dsn, $user, $password);
+    if($dbh)
+    {
+     // echo "Connected to the <strong>$dbname</strong> database successfully!";
+        }
+  }
+  catch (PDOException $e){
+    echo $e->getMessage();
+  }
+
+    //fetch table rows from mysql db
+    $sql = "select distinct stationId from SiteStatusHistory_dev.StationReport_tbl where stationId not like 'BARN' AND stationId not LIKE 'EXPASRC2' AND stationId not like 'NYSFAIR' and stationId not like 'TEST3000' and stationId not like 'WFMBSNOW' order by stationId DESC";
+    $stmt = $dbh->query($sql);
+  $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $sarray = [];
+    while($row =$stmt->fetch())
+    {
+        $sites[] = $row['stationId'];
+        //echo $row['stid'];
+    }
 
  ?>
 <head>
@@ -78,46 +74,6 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
-<p class="trigger"><a>Click to toggle options</a></p>
-<div class="toggle_container">
-<div class="block">
-<div class="col-sm-6 col-sm-offset-3">
-<form action="" method="GET">
-<div id="date-group" class="form-group">
-<p>
-<label for="sdate">Start Date:</label>
-<input type="text" id="startdatepicker" name="startdatepicker" value="<?php echo $startdate?>"> 
-</p>
-<p>
-<label for="edate">End Date:</label>
-<input type="text" id="enddatepicker" name="enddatepicker"value="<?php echo $enddate?>"></p>
-</p>
-</div>
-  <div id="interval class="form-group">
-  <label for="interval">Time Interval</label>
-    <fieldset>
-    <input type="radio" name="radio-1" value="interval5" checked="checked">
-      <label for="interval"> 5 minutes </label>
-      <br>
-      <input type="radio" name="radio-1" value="interval30">
-      <label for="interval"> 30 minutes</label>
-      <br>
-      <input type="radio" name="radio-1" value="intervalhour">
-      <label for="interval"> Hour </label>
-      <br>
-      <input type="radio" name="radio-1" value="intervalday">
-      <label for="interval"> Day </label>
-      <br>
-      <input type="radio" name="radio-1" value="intervalmonth">
-      <label for="interval"> 30 days </label>
-      <br>
-    </fieldset>
-  </div>
-  <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button>
-</form>
-</div>
-</div>
-</div>
 <span></span>
 <div id="container"></div>
 </body>
