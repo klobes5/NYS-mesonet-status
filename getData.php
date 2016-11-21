@@ -49,7 +49,7 @@ $sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where r
          $index = array_search($row['stationId'], $sites);
          $frequency = (int)$row['sum'];
 
-         $object = array(
+         $object[] = array(
             "time" => $time,
             "index" => $index,
             "frequency" => $frequency 
@@ -62,9 +62,10 @@ $sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where r
            //                               "frequency": "number of misses"
          //                                 }
          //                             }
-         echo json_encode(array('point' => $object),JSON_PRETTY_PRINT);
-    
-         
+         //echo json_encode(array('point' => $object),JSON_PRETTY_PRINT);
+
     }
+          $json= json_encode(array('points' =>$object), JSON_PRETTY_PRINT);
+          echo $json;
 ?>
 
