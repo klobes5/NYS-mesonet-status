@@ -1,20 +1,3 @@
-function requestData() {
-    $.ajax({
-        url: 'operations.nysmesonet.org/~klobiondo/NYS-mesonet-status/getData.php',
-        success: function(point) {
-            var series = chart.series[0],
-                shift = series.data.length > 10000000; // shift if the series is 
-                                                 // longer than 100000
-
-            // add the point
-            chart.series[0].addPoint(point, true, shift);
-            
-            // call it again after 5 minutes
-            setTimeout(requestData, 300000);    
-        },
-        cache: false
-    });
-}
 
 /**
  * This plugin extends Highcharts in two ways:
@@ -74,34 +57,72 @@ function requestData() {
     H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
 }(Highcharts));
 
-$(document).ready(function () {
 
+function requestData(){
+       $.ajax({
+        url: './getData.php',
+        type: 'GET',
+        //dataType: 'json',
+        async: true,
+
+        success: function (data){
+          
+          alert('Successfully called');
+          //var myResponse = JQuery.parseJSON(data); // parse received data
+          //var myResponse = $.parseJSON(data); // parse received data
+          var myResponse = parseJSON(data);
+          console.log(myResponse);
+          my_chart(myResponse); //pass data into highcharts
+
+        },
+        cache: false
+      });
+     }
+     
+
+
+$(document).ready(function () {
+   
    var pixels_per_site = 15;
    var margins = 35;
    var height = pixels_per_site * sites.length + margins;
-   var phpMax = getUrlVars()["radio-1"]
-   console.log(phpMax);
-   switch (phpMax){
-      case "interval5":
-        myMax = 1; //Max possible reports
-        break;
-      case "interval30":
-        myMax = 6; 
-        break;
-      case "intervalhour":
-        myMax = 12; 
-        break;
-      case "intervalday":
-        myMax = 288; 
-        break;
-      case "intervalmonth":
-        myMax = 8640;
-        break;
-    }
-    console.log(myMax);
+   /*
+   $(function(){
+       $.ajax({
+        url: './getData.php',
+        type: 'POST',
+        async: true,
+        dataType: "json",
+        success: function (data){
+          console.log(data);
+          var myResponse = JQuery.parseJSON(data); // parse received data
+          my_chart(myResponse); //pass data into highcharts
+
+        }
+      });
+     });
+      */
+
+       /*
+        success: function(point) {
+            var series = chart.series[0],
+                shift = series.data.length > 10000000; // shift if the series is 
+                                                 // longer than 100000
+
+            // add the point
+            chart.series[0].addPoint(point, true, shift);
+            
+            // call it again after 5 minutes
+            setTimeout(requestData, 300000);    
+        },
+        cache: false
+    }); 
+    */
+    //console.log(myMax);
     $('#container').height(height);
     console.log(sites.length);
 
+function my_chart(response) { //I wrapped my highcharts in a function and pass the ajax response as the function's argument
     $('#container').highcharts({
         chart: {
             renderTo: 'container',
@@ -111,7 +132,7 @@ $(document).ready(function () {
             plotBorderWidth: 1,
             events: {
                 load: requestData
-            }
+            } 
         },
 
 
@@ -142,7 +163,8 @@ $(document).ready(function () {
     colorAxis: {
       min: 0,
       //max: 24,
-      max : myMax,
+      //max : myMax,
+      max: 1, //it is one for interval of 5 minutes
       
       //GET INTERVAL FROM php page and redraw with proper scale
       //max = " <?php echo $max ?> "
@@ -190,7 +212,7 @@ $(document).ready(function () {
         series: [{
             name: 'Site Status',
             borderWidth: 0,
-            data: data,
+            data: response,   //received from ajax call as "response"
             dataLabels: {
                 enabled: false,
                 //color: '#000000'
@@ -198,31 +220,6 @@ $(document).ready(function () {
         }]
 
     });
-});
-$(document).ready(function() {
-    // process the form
-    $('execute').submit(function(event) {
+}});
 
-        // process the form
-        $.ajax({
-            type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-            url         : 'stationstatus.php', // the url where we want to POST
-	          async       : true,
-            data        : formData, // our data object
-            dataType    : 'json', // what type of data do we expect back from the server
-            encode          : true
-        })
-            // using the done promise callback
-            .done(function(data) {
 
-                // log data to the console so we can see
-                console.log(data); 
-
-                // here we will handle errors and validation messages
-            });
-
-        // stop the form from submitting the normal way and refreshing the page
-        event.preventDefault();
-    });
-
-});

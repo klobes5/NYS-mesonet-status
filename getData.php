@@ -36,22 +36,36 @@ try{
     }
 //Get Data from the last 24 hours
 	//$sql = "(select stationId ,reportTime, SUM(missed) from siteMisses where reportTime BETWEEN  (NOW() - INTERVAL 1 DAY) and NOW() and reportTime > ? group BY stationId, UNIX_TIMESTAMP(reportTime) DIV ? ORDER BY stationId ASC), $lastUpdate, $myInterval";
-$sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where reportTime BETWEEN  '2016-06-02 00:00:00' and '2016-06-03 00:00:00' and reportTime > '2016-06-02 00:00:00' group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 3600 ORDER BY stationId ASC";
+$sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where reportTime BETWEEN  '2016-06-02 00:00:00' and '2016-06-02 23:59:59' and reportTime > '2016-06-02 00:00:00' group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 3600 ORDER BY stationId ASC";
     $stmt = $dbh->query($sql);
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     //initialize data array
     $data = []; 
+
+    //json header
+    header('Content-Type: application/json');
     while($row =$stmt->fetch())
     {    
          $time = strtotime($row['reportTime']) * 1000;
         //$time = strtotime($row['lastReportTime']);
          $index = array_search($row['stationId'], $sites);
-         $frequency = $row['sum'];
-         
+         $frequency = (int)$row['sum'];
+
+         $object = array(
+            "time" => $time,
+            "index" => $index,
+            "frequency" => $frequency 
+          );
          //push the information to data fit for HighCharts
-         array_push($data, [$time, $index, $frequency]);
-         //echo json to page
-         echo json_encode($data);
+         // The json has the format of {
+          //                             "point": { 
+         //                                 "time": "datetime", 
+           //                               "index": "index corresponding to station on y axis", 
+           //                               "frequency": "number of misses"
+         //                                 }
+         //                             }
+         echo json_encode(array('point' => $object),JSON_PRETTY_PRINT);
+    
          
     }
 ?>

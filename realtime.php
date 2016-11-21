@@ -48,6 +48,7 @@
         $sites[] = $row['stationId'];
         //echo $row['stid'];
     }
+     //array_push($sites, $sites);
 
  ?>
 <head>
@@ -70,6 +71,7 @@
 <script src="http://momentjs.com/downloads/moment.min.js"></script>
 <script src="./realtime.js"></script>
 <script>
+var sites = <?php echo json_encode($sites); ?>;
 </script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
