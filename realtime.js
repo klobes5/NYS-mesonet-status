@@ -66,14 +66,11 @@ function requestData(){
         dataType: 'text', // trying text right now
 
         contentType: "application/json; charset=utf-8",
-        async: false, //false for now
-        //data: {point: "point"},
+        async: true, 
         success: function (data){
           alert('Successfully called');
-          
           chart.addSeries(data, true, true);
           console.log(data);
-
           setTimeout(requestData, 300000); //request new data every 5 minutes
 
         },
