@@ -1,4 +1,4 @@
-
+var chart; // global
 /**
  * This plugin extends Highcharts in two ways:
  * - Use HTML5 canvas instead of SVG for rendering of the heatmap squares. Canvas
@@ -63,18 +63,24 @@ function requestData(){
         url: './getData.php',
         type: 'GET',
         //dataType: 'json',
-        async: true,
+        dataType: 'text', // trying text right now
 
+        contentType: "application/json; charset=utf-8",
+        async: false, //false for now
+        //data: {point: "point"},
         success: function (data){
-          
           alert('Successfully called');
-          //var myResponse = JQuery.parseJSON(data); // parse received data
-          //var myResponse = $.parseJSON(data); // parse received data
-          var myResponse = parseJSON(data);
-          console.log(myResponse);
-          my_chart(myResponse); //pass data into highcharts
+          
+          chart.addSeries(data, true, true);
+          console.log(data);
+
+          setTimeout(requestData, 300000); //request new data every 5 minutes
 
         },
+        error: function (textStatus, errorThrown) {
+                alert('there was an error in the ajax call');
+                Success = false;//doesnt goes here
+            },
         cache: false
       });
      }
@@ -82,48 +88,13 @@ function requestData(){
 
 
 $(document).ready(function () {
-   
+
+$('#container').height(height);
+    console.log(sites.length);
    var pixels_per_site = 15;
    var margins = 35;
    var height = pixels_per_site * sites.length + margins;
-   /*
-   $(function(){
-       $.ajax({
-        url: './getData.php',
-        type: 'POST',
-        async: true,
-        dataType: "json",
-        success: function (data){
-          console.log(data);
-          var myResponse = JQuery.parseJSON(data); // parse received data
-          my_chart(myResponse); //pass data into highcharts
-
-        }
-      });
-     });
-      */
-
-       /*
-        success: function(point) {
-            var series = chart.series[0],
-                shift = series.data.length > 10000000; // shift if the series is 
-                                                 // longer than 100000
-
-            // add the point
-            chart.series[0].addPoint(point, true, shift);
-            
-            // call it again after 5 minutes
-            setTimeout(requestData, 300000);    
-        },
-        cache: false
-    }); 
-    */
-    //console.log(myMax);
-    $('#container').height(height);
-    console.log(sites.length);
-
-function my_chart(response) { //I wrapped my highcharts in a function and pass the ajax response as the function's argument
-    $('#container').highcharts({
+ chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             type: 'heatmap',
@@ -131,10 +102,13 @@ function my_chart(response) { //I wrapped my highcharts in a function and pass t
             marginBottom: 35,
             plotBorderWidth: 1,
             events: {
-                load: requestData
-            } 
+                load: function() {
+                  chart = this; // `this` is the reference to the chart
+                  requestData();
+}
+              }
+   
         },
-
 
         title: {
             text: 'Station Report'
@@ -212,7 +186,7 @@ function my_chart(response) { //I wrapped my highcharts in a function and pass t
         series: [{
             name: 'Site Status',
             borderWidth: 0,
-            data: response,   //received from ajax call as "response"
+            data: [],   //received from ajax call as "response"
             dataLabels: {
                 enabled: false,
                 //color: '#000000'
@@ -220,6 +194,6 @@ function my_chart(response) { //I wrapped my highcharts in a function and pass t
         }]
 
     });
-}});
+});
 
 
