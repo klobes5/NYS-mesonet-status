@@ -1,4 +1,5 @@
 var chart; // global
+
 /**
  * This plugin extends Highcharts in two ways:
  * - Use HTML5 canvas instead of SVG for rendering of the heatmap squares. Canvas
@@ -64,12 +65,17 @@ function requestData(){
         type: 'GET',
         //dataType: 'json',
         dataType: 'text', // trying text right now
-
+        data: "{}",
         contentType: "application/json; charset=utf-8",
         async: true, 
-        success: function (data){
+        success: function (response){
           alert('Successfully called');
-          chart.addSeries(data, true, true);
+
+          var series ={data: []};
+          chart.series.data.push(response, data); 
+          chart.options.series.push(series);
+
+          //chart.addSeries(response, true, true);
           console.log(data);
           setTimeout(requestData, 300000); //request new data every 5 minutes
 
