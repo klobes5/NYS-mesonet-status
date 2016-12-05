@@ -32,9 +32,12 @@ try{
         $sites[] = $row['stationId'];
         //echo $row['stid'];
     }
-//Get Data from the last 24 hours
+//Get Data from the last 24 hours With some logic for custom Intervals and chart update functions
 	//$sql = "(select stationId ,reportTime, SUM(missed) from siteMisses where reportTime BETWEEN  (NOW() - INTERVAL 1 DAY) and NOW() and reportTime > ? group BY stationId, UNIX_TIMESTAMP(reportTime) DIV ? ORDER BY stationId ASC), $lastUpdate, $myInterval";
-$sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where reportTime BETWEEN  '2016-06-02 00:00:00' and '2016-06-02 23:59:59' and reportTime > '2016-06-02 00:00:00' group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 300 ORDER BY stationId ASC";
+
+//standard 5 minute interval with last 24 hours drawn
+  $sql = "select stationId ,reportTime, SUM(missed) from siteMisses where reportTime BETWEEN  (NOW() - INTERVAL 1 DAY) and NOW()  group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 300 ORDER BY stationId ASC";
+//$sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where reportTime BETWEEN  '2016-06-02 00:00:00' and '2016-06-02 23:59:59' and reportTime > '2016-06-02 00:00:00' group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 300 ORDER BY stationId ASC";
     $stmt = $dbh->query($sql);
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     //initialize data array
@@ -65,7 +68,7 @@ $sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where r
          //echo json_encode(array('point' => $object),JSON_PRETTY_PRINT);
 
     }
-          $json= json_encode(array('points' =>$object), JSON_PRETTY_PRINT);
+          $json= json_encode($object, JSON_PRETTY_PRINT);
           echo $json;
 ?>
 

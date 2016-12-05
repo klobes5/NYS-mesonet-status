@@ -65,13 +65,14 @@ function requestData(){
         type: 'GET',
         //dataType: 'json',
         dataType: 'text', // trying text right now
-        data: "{}",
+        //data: "{}",
         contentType: "application/json; charset=utf-8",
         async: true, 
         success: function (response){
           alert('Successfully called');
           data = JSON.parse(response);
-          chart.addSeries(data, true, true);
+          chart.get('myheatmap').setData(requestData);
+          //chart.addSeries(data, true, true);
           //console.log(response);
           setTimeout(requestData, 300000); //request new data every 5 minutes
 
@@ -184,6 +185,7 @@ $('#container').height(height);
 
         series: [{
             name: 'Site Status',
+            id: 'myheatmap',
             borderWidth: 0,
             data: [],   //received from ajax call as "response"
             dataLabels: {
