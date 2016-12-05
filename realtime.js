@@ -72,7 +72,7 @@ function requestData(){
           alert('Successfully called');
           data = JSON.parse(response);
           chart.addSeries(data, true, true);
-          console.log(response);
+          //console.log(response);
           setTimeout(requestData, 300000); //request new data every 5 minutes
 
         },
