@@ -1,5 +1,5 @@
 var chart; // global
-
+var counter = 0; //global counter for how many redraws have occured
 /**
  * This plugin extends Highcharts in two ways:
  * - Use HTML5 canvas instead of SVG for rendering of the heatmap squares. Canvas
@@ -58,24 +58,27 @@ var chart; // global
     H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
 }(Highcharts));
 
-
+//subsequest adds of data
 function requestData(){
        $.ajax({
         url: './getData.php',
         type: 'GET',
-        //dataType: 'json',
-        dataType: 'text', // trying text right now
+        dataType: 'json',
+        //dataType: 'text', // trying text right now
         //data: "{}",
         contentType: "application/json; charset=utf-8",
         async: true, 
         success: function (response){
           alert('Successfully called');
-          data = JSON.parse(response);
-          chart.get('myheatmap').setData(requestData);
-          //chart.addSeries(data, true, true);
-          //console.log(response);
+          if (counter == 0){
+          chart.get('myheatmap').setData(response);
+          //chart.addSeries(data, true, true);           
+          }
+          else{
+            chart.get('myheatmap').addSeries(response);
+          }
+          counter++;
           setTimeout(requestData, 300000); //request new data every 5 minutes
-
         },
         error: function (textStatus, errorThrown) {
                 alert('there was an error in the ajax call');
@@ -102,10 +105,11 @@ $('#container').height(height);
             marginBottom: 35,
             plotBorderWidth: 1,
             events: {
-                load: function() {
-                  chart = this; // `this` is the reference to the chart
+                load: function(event){
+                  alert ('Chart loaded with series :'+ this.get("myheatmap").name);
                   requestData();
-}
+                }
+                
               }
    
         },
@@ -187,7 +191,7 @@ $('#container').height(height);
             name: 'Site Status',
             id: 'myheatmap',
             borderWidth: 0,
-            data: [],   //received from ajax call as "response"
+            data:  [],   //received from ajax call as "response"
             dataLabels: {
                 enabled: false,
                 //color: '#000000'
