@@ -48,7 +48,26 @@
         $sites[] = $row['stationId'];
         //echo $row['stid'];
     }
+
      //array_push($sites, $sites);
+
+    //standard 5 minute interval with last 24 hours drawn
+    $sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where reportTime BETWEEN  (NOW() - INTERVAL 1 DAY) and NOW()  group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 300 ORDER BY stationId ASC";
+     $stmt = $dbh->query($sql);
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $data = [];    
+
+    while($row =$stmt->fetch())
+    {    
+         $time = strtotime($row['reportTime']) * 1000;
+        //$time = strtotime($row['lastReportTime']);
+         $index = array_search($row['stationId'], $sites);
+         $frequency = $row['sum'];
+         
+         //push the information to data fit for HighCharts
+         array_push($data, [$time, $index, $frequency]);
+         
+    }
 
  ?>
 <head>
@@ -72,6 +91,7 @@
 <script src="./realtime.js"></script>
 <script>
 var sites = <?php echo json_encode($sites); ?>;
+var data = <?php echo json_encode($data); ?>;
 </script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>

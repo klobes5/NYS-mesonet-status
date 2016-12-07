@@ -1,5 +1,7 @@
 var chart; // global
 var counter = 0; //global counter for how many redraws have occured
+
+
 /**
  * This plugin extends Highcharts in two ways:
  * - Use HTML5 canvas instead of SVG for rendering of the heatmap squares. Canvas
@@ -7,7 +9,8 @@ var counter = 0; //global counter for how many redraws have occured
  * - Add a K-D-tree to find the nearest point on mouse move. Since we no longer have SVG shapes
  *   to capture mouseovers, we need another way of detecting hover points for the tooltip.
  */
-(function (H) {
+
+  (function (H) {
     var Series = H.Series,
         each = H.each;
     /**
@@ -58,7 +61,7 @@ var counter = 0; //global counter for how many redraws have occured
     H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
 }(Highcharts));
 
-//subsequest adds of data
+
 function requestData(){
        $.ajax({
         url: './getData.php',
@@ -69,16 +72,15 @@ function requestData(){
         contentType: "application/json; charset=utf-8",
         async: true, 
         success: function (response){
-          alert('Successfully called');
-          if (counter == 0){
-          chart.get('myheatmap').setData(response);
-          //chart.addSeries(data, true, true);           
-          }
-          else{
-            chart.get('myheatmap').addSeries(response);
-          }
-          counter++;
-          setTimeout(requestData, 300000); //request new data every 5 minutes
+          //alert('Successfully called');   
+
+          //convert json to highcharts compatible data 
+          a = response;
+          newData = a.map(function (v) { return [v.time, v.index, v.frequency]; });
+
+          chart.get('myheatmap').setData(newData);
+          //chart.redraw();
+          setTimeout(requestData, 10000); //request new data every 5 minutes
         },
         error: function (textStatus, errorThrown) {
                 alert('there was an error in the ajax call');
@@ -88,15 +90,15 @@ function requestData(){
       });
      }
      
-
-
 $(document).ready(function () {
 
-$('#container').height(height);
+
     console.log(sites.length);
    var pixels_per_site = 15;
    var margins = 35;
    var height = pixels_per_site * sites.length + margins;
+   console.log(height);
+   $('#container').height(height);
  chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
@@ -106,11 +108,15 @@ $('#container').height(height);
             plotBorderWidth: 1,
             events: {
                 load: function(event){
-                  alert ('Chart loaded with series :'+ this.get("myheatmap").name);
+                  //alert ('Chart loaded with series :'+ this.get("myheatmap").name);
                   requestData();
                 }
                 
-              }
+              },
+              //animation for update
+            animation: {
+                duration: 1000
+            }
    
         },
 
@@ -191,7 +197,7 @@ $('#container').height(height);
             name: 'Site Status',
             id: 'myheatmap',
             borderWidth: 0,
-            data:  [],   //received from ajax call as "response"
+            data:  data,   //received from ajax call as "response"
             dataLabels: {
                 enabled: false,
                 //color: '#000000'

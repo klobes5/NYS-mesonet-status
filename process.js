@@ -94,6 +94,7 @@ $(document).ready(function () {
    var pixels_per_site = 15;
    var margins = 35;
    var height = pixels_per_site * sites.length + margins;
+   console.log(height);
    var phpMax = getUrlVars()["radio-1"]
    console.log(phpMax);
    switch (phpMax){

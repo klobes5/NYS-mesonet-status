@@ -36,7 +36,7 @@ try{
 	//$sql = "(select stationId ,reportTime, SUM(missed) from siteMisses where reportTime BETWEEN  (NOW() - INTERVAL 1 DAY) and NOW() and reportTime > ? group BY stationId, UNIX_TIMESTAMP(reportTime) DIV ? ORDER BY stationId ASC), $lastUpdate, $myInterval";
 
 //standard 5 minute interval with last 24 hours drawn
-  $sql = "select stationId ,reportTime, SUM(missed) from siteMisses where reportTime BETWEEN  (NOW() - INTERVAL 1 DAY) and NOW()  group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 300 ORDER BY stationId ASC";
+  $sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where reportTime BETWEEN  (NOW() - INTERVAL 1 DAY) and NOW()  group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 300 ORDER BY stationId ASC";
 //$sql = "select stationId ,reportTime, SUM(missed) as sum from siteMisses where reportTime BETWEEN  '2016-06-02 00:00:00' and '2016-06-02 23:59:59' and reportTime > '2016-06-02 00:00:00' group BY stationId, UNIX_TIMESTAMP(reportTime) DIV 300 ORDER BY stationId ASC";
     $stmt = $dbh->query($sql);
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
